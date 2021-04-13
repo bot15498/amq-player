@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+    <head>
+        <script>
+            function randomize() {
+                var jsonArr = JSON.parse(document.getElementById("song-input").value);
+                var idx = Math.floor(Math.random() * jsonArr.length);
+                var curr = jsonArr[idx];
+                var url = curr["url"];
+                var outstr = "";
+                Object.keys(curr).forEach(function(key){
+                    if(key == "url") {return; }
+                    outstr += "<b>";
+                    outstr += key;
+                    outstr += "</b>: ";
+                    outstr += curr[key];
+                    outstr += "<br />";
+                });
+                document.getElementById("song-info").innerHTML = outstr;
+                document.getElementById("video-player-src").setAttribute("src", url);
+                document.getElementById("video-player").load();
+                document.getElementById("video-player").play();
+            }
+        </script>
+    </head>
+    <body>
+        <h1>don't lose please</h1>
+        <button style="display:inline-block">play</button>
+        <button style="display:inline-block">pause</button>
+        <button style="display:inline-block">reload</button>
+        <table>
+            <tr>
+                <td style="width: 50%;">
+                    <div id="song-info">
+                        song info goes here
+                    </div>
+                </td>
+                <td>
+                    <div class="player">
+                        <video id="video-player" onended="randomize()" controls style="max-width: 580px;">
+                            <source id="video-player-src"  src="https://files.catbox.moe/q6yrdg.webm" type="video/webm">
+                        </video>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div>
+                        json input
+                    </div>
+                    <textarea id="song-input" rows="10" style="width: 100%;"></textarea>
+                </td>
+            </tr>
+        </table>
+
+    </body>
+</hmtl>
