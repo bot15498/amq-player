@@ -5,7 +5,8 @@
                 var jsonArr = JSON.parse(document.getElementById("song-input").value);
                 var idx = Math.floor(Math.random() * jsonArr.length);
                 var curr = jsonArr[idx];
-                var url = curr["url"];
+                var url = curr["url"].split('/');
+                url = "songs/" + url[url.length - 1];
                 var outstr = "";
                 Object.keys(curr).forEach(function(key){
                     if(key == "url") {return; }
