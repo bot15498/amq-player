@@ -1,5 +1,6 @@
 import sys
 import json
+import os.path
 import urllib.request as req
 
 def main():
@@ -14,6 +15,9 @@ def main():
     data = json.loads(raw_json_str)
     for entry in data:
         print('Downloading',entry['url'])
+        if os.path.isfile('songs/' + entry['url'].split('/')[-1]):
+            print('Found file, skipping...')
+            continue
         req.urlretrieve(entry['url'], 'songs/' + entry['url'].split('/')[-1])
 
 

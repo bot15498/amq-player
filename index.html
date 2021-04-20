@@ -1,7 +1,13 @@
 <!DOCTYPE html>
     <head>
         <script>
-            function randomize() {
+            function playNext() {
+                if(document.getElementById("replay-check").checked) {
+                    document.getElementById("video-player").load();
+                    document.getElementById("video-player").play();
+                    return;
+                }
+
                 var jsonArr = JSON.parse(document.getElementById("song-input").value);
                 var idx = Math.floor(Math.random() * jsonArr.length);
                 var curr = jsonArr[idx];
@@ -24,10 +30,11 @@
         </script>
     </head>
     <body>
-        <h1>don't lose please</h1>
+        <h1>wake up girls simulator 3030</h1>
         <button style="display:inline-block">play</button>
         <button style="display:inline-block">pause</button>
         <button style="display:inline-block">reload</button>
+        <input id="replay-check" type="checkbox" name="repeat?">repeat?</input>
         <table>
             <tr>
                 <td style="width: 50%;">
@@ -37,8 +44,8 @@
                 </td>
                 <td>
                     <div class="player">
-                        <video id="video-player" onended="randomize()" controls style="max-width: 580px;">
-                            <source id="video-player-src"  src="https://files.catbox.moe/q6yrdg.webm" type="video/webm">
+                        <video id="video-player" onended="playNext()" controls style="max-width: 580px;">
+                            <source id="video-player-src"  src="songs/rch1mb.webm" type="video/webm">
                         </video>
                     </div>
                 </td>
