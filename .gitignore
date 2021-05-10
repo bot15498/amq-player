@@ -1,1 +1,4 @@
 *.webm
+__pycache__/
+.idea/
+venv/
