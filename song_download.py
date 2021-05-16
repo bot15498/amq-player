@@ -10,8 +10,8 @@ def main():
     # clear out files in songs except temp.txt
 
     # load file
-    input_file = open(sys.argv[1])
-    raw_json_str = input_file.read()
+    input_file = open(sys.argv[1], 'r',encoding='utf-8')
+    raw_json_str = input_file.read().strip()
     data = json.loads(raw_json_str)
     for entry in data:
         print('Downloading',entry['url'])

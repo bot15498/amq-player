@@ -75,5 +75,5 @@
 { "name": "To Love-Ru Darkness 2nd", "type" : "ED 1", "song name": "Gardens", "artist" : "Mami Kawada", "url" : "https://files.catbox.moe/nt4xkg.webm"},
 { "name": "planetarian: Hoshi no Hito", "type" : "ED 1", "song name": "Hoshi no Fune", "artist" : "Lia", "url" : "https://files.catbox.moe/ufnqi4.webm"},
 { "name": "Kanokon: Manatsu no Daishanikusai", "type" : "ED 1", "song name": "Lupinus - Shiawase no Kaze", "artist" : "Ui Miyazaki", "url" : "https://files.catbox.moe/avpbkk.webm"},
-{ "name": "Is This a Zombie? of the Dead", "type" : "Insert", "song name": "Minna mo Ii na", "artist" : "Hisako Kanemoto", "url" : "https://files.catbox.moe/ko7qh7.webm"},
+{ "name": "Is This a Zombie? of the Dead", "type" : "Insert", "song name": "Minna mo Ii na", "artist" : "Hisako Kanemoto", "url" : "https://files.catbox.moe/ko7qh7.webm"}
 ]
