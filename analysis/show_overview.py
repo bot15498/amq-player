@@ -75,8 +75,6 @@ def make_report(filenames, username, annid):
     df.to_excel('output-' + str(annid) + '-' + show_data['name'] + '.xlsx')
     return df, show_data
 
-def make_excel_file(df):
-    
 
 if __name__ == '__main__':
     opts, args = getopt.getopt(sys.argv[1:], '', ['username=', 'min-date=', 'data=', 'annid='])
