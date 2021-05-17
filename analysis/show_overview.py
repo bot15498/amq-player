@@ -71,9 +71,12 @@ def make_report(filenames, username, annid):
         'webm url' : [cum_song_data[key]['webm url'] for key in cum_song_data]
     }
     df = pd.DataFrame(data=pd_data)
-    df.set_index(['Song name','Artist'])
+    df = df.set_index(['Song name', 'Artist', 'Song type'])
     df.to_excel('output-' + str(annid) + '-' + show_data['name'] + '.xlsx')
     return df, show_data
+
+def make_excel_file(df):
+    
 
 if __name__ == '__main__':
     opts, args = getopt.getopt(sys.argv[1:], '', ['username=', 'min-date=', 'data=', 'annid='])
@@ -100,5 +103,6 @@ if __name__ == '__main__':
 
     all_filenames = get_filenames_in_order(datadir)
     df, show_data = make_report(all_filenames, username, annid)
-    print(df[['Song name', 'Artist', 'Song type', 'Correct Streak', 'Number of times seen', 'webm url']])
+    print(df[['Correct streak', 'Number of times seen', 'webm url']])
+    print()
     print(show_data)
