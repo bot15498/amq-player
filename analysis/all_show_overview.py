@@ -27,7 +27,7 @@ def load_data_in_dir(min_date:str, username:str, datadir: str='../amq/data/gener
             if song_data['annId'] not in agg_data:
                 curr_annid = song_data['annId']
                 agg_data[curr_annid] = {'show name': song_data['anime']['romaji'],
-                                                'in list?' : True
+                                                'in list?' : True,
                                                 'date last correct' : '', 'date last wrong': '',
                                                 'number correct' : 0, 
                                                 'number wrong' : 0,
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     print('Hey hey hey start dash!')
     opts, args = getopt.getopt(sys.argv[1:], '', ['username=', 'min-date=', 'data='])
     username = ''
-    min_date = (datetime.today() - timedelta(weeks=1)).strftime('%Y-%m-%d')
+    min_date = (datetime.today() - timedelta(weeks=7)).strftime('%Y-%m-%d')
     datadir = '../amq/data/general'
     for o, a in opts:
         if o == '--username':
@@ -102,5 +102,5 @@ if __name__ == '__main__':
 
     data = load_data_in_dir(min_date, username, datadir)
     df = convert_to_df(data)
-    df.to_excel('output.xlsx', )
+    df.to_excel('all_song_overview.xlsx')
     print(df)
