@@ -4,82 +4,89 @@ import os
 import pandas as pd
 import sys
 from datetime import datetime, timedelta
+from Utils import get_filenames_in_order
 
-def load_data_in_dir(min_date:str, username:str, datadir: str='../amq/data/general'):
-    # walk data directory for any json file
-    all_files_raw = os.walk(datadir)
-    all_files = []
-    for path, _, filenames in all_files_raw:
-        for filename in filenames:
-            if filename.split('.')[-1].lower() == 'json':
-                all_files.append(path + '/' + filename)
+def parse_file(filename, date, username, agg_data):
+    # load json file
+    file = open(filename, encoding='utf-8')
+    json_data = json.load(file, encoding='utf-8')
+    file.close()
+    print('Loading file:', filename)
 
-    agg_data = {}
-    # probably should multithread this at some point
-    for filename in all_files:
-        file = open(filename, encoding='utf-8')
-        json_data = json.load(file, encoding='utf-8')
-        file_datetime = datetime.fromtimestamp(os.path.getmtime(filename))
-        file.close()
-        print('\tLoading data for',filename)
-        for song_data in json_data:
-            # add show if it doesn't exist yet
-            if song_data['annId'] not in agg_data:
-                curr_annid = song_data['annId']
-                agg_data[curr_annid] = {'show name': song_data['anime']['romaji'],
-                                                'in list?' : True,
-                                                'date last correct' : '', 'date last wrong': '',
-                                                'number correct' : 0, 
-                                                'number wrong' : 0,
-                                                'total number seen' : 0,
-                                                'song of last correct' : '', 'url of last correct' : '',
-                                                'song of last wrong' : '', 'url of last wrong' : ''}
+    # iterate through all song data. Assumes that later songs show up later.
+    # agg_data = {}
+    for song_data in json_data:
+        curr_annid = song_data['annId']
 
-            # get specific player data
-            player_data = [player_data for player_data in song_data['players'] if player_data['name'].lower() == username.lower()]
-            if(len(player_data) == 0): continue
-            player_data = player_data[0]
+        # check if show exists or not
+        if curr_annid not in agg_data:
+            agg_data[curr_annid] = {'show name': song_data['anime']['romaji'],
+                                    'in list?' : True,
+                                    'correct streak' : 0,
+                                    'number correct' : 0, 
+                                    'number wrong' : 0,
+                                    'total number seen' : 0,
+                                    'song of last correct' : '', 'url of last correct' : '',
+                                    'song of last wrong' : '', 'url of last wrong' : '',
+                                    'date last correct' : '', 'date last wrong': ''}
+        
+        # get player data
+        player_data = [player_data for player_data in song_data['players'] if player_data['name'].lower() == username.lower()]
+        if(len(player_data) == 0): continue
+        player_data = player_data[0]
+        
+        # handle correct / wrong data
+        max_res = str(max([int(num) for num in song_data['urls']['catbox'].keys()]))
+        if player_data['correct']:
+            agg_data[curr_annid]['number correct'] += 1
+            agg_data[curr_annid]['song of last correct'] = song_data['name']
+            agg_data[curr_annid]['url of last correct'] = song_data['urls']['catbox'][max_res]
+            agg_data[curr_annid]['date last correct'] = date
+            agg_data[curr_annid]['correct streak'] = 1 if agg_data[curr_annid]['correct streak'] <= 0 \
+                                                                    else agg_data[curr_annid]['correct streak'] + 1
+        else:
+            agg_data[curr_annid]['number wrong'] += 1
+            agg_data[curr_annid]['song of last wrong'] = song_data['name']
+            agg_data[curr_annid]['url of last wrong'] = song_data['urls']['catbox'][max_res]
+            agg_data[curr_annid]['date last wrong'] = date
+            agg_data[curr_annid]['correct streak'] = -1 if agg_data[curr_annid]['correct streak'] >= 0 \
+                                                                    else agg_data[curr_annid]['correct streak'] - 1
+        agg_data[curr_annid]['total number seen'] += 1
 
-            # get from list data
-            list_check_count = len([True for list_data in song_data['fromList'] if list_data['name'].lower() == username.lower()])
-            list_check = True if list_check_count == 1 else False
-            agg_data[curr_annid]['inList'] = list_check
-
-            # get correct or not and populate
-            agg_data[curr_annid]['total number seen'] += 1
-            if player_data['correct']:
-                agg_data[curr_annid]['number correct'] += 1
-                if agg_data[curr_annid]['date last correct'] == '' or agg_data[curr_annid]['date last correct'] < file_datetime:
-                    agg_data[curr_annid]['date last correct'] = file_datetime
-                    agg_data[curr_annid]['song of last correct'] = song_data['name'] + ' - ' + song_data['artist']
-                    max_res = str(max([int(num) for num in song_data['urls']['catbox'].keys()]))
-                    agg_data[curr_annid]['url of last correct'] = song_data['urls']['catbox'][max_res]
-            else:
-                agg_data[curr_annid]['number wrong'] += 1
-                if agg_data[curr_annid]['date last wrong'] == '' or agg_data[curr_annid]['date last wrong'] < file_datetime:
-                    agg_data[curr_annid]['date last wrong'] = file_datetime
-                    agg_data[curr_annid]['song of last wrong'] = song_data['name'] + ' - ' + song_data['artist']
-                    max_res = str(max([int(num) for num in song_data['urls']['catbox'].keys()]))
-                    agg_data[curr_annid]['url of last wrong'] = song_data['urls']['catbox'][max_res]
+        # get player list data
+        list_check_count = len([True for list_data in song_data['fromList'] if list_data['name'].lower() == username.lower()])
+        list_check = True if list_check_count == 1 else False
+        agg_data[curr_annid]['in list?'] = list_check
     return agg_data
+    
+def make_report(date_files, username):
+    agg_data = {}
+    for date, filename in date_files:
+        agg_data = parse_file(filename, date, username, agg_data)
 
-
-def convert_to_df(data):
+    # convert to df
     pd_data = {
-        'ann id' : list(data.keys()),
-        'show name' : [data[annid]['show name'] for annid in data],
-        'in list?' : [data[annid]['in list?'] for annid in data],
-        'date last correct' : [data[annid]['date last correct'] for annid in data],
-        'date last wrong' : [data[annid]['date last wrong'] for annid in data],
-        'number correct' : [data[annid]['number correct'] for annid in data],
-        'number wrong' : [data[annid]['number wrong'] for annid in data],
-        'total number seen' : [data[annid]['total number seen'] for annid in data],
-        'song of last correct' : [data[annid]['song of last correct'] for annid in data],
-        'url of last correct' : [data[annid]['url of last correct'] for annid in data],
-        'song of last wrong' : [data[annid]['song of last wrong'] for annid in data],
-        'url of last wrong' : [data[annid]['url of last wrong'] for annid in data],
+        'ANN ID' : list(agg_data.keys()),
+        'Show Name' : [agg_data[annid]['show name'] for annid in agg_data],
+        'In List?' : [agg_data[annid]['in list?'] for annid in agg_data],
+        'Correct Streak' : [agg_data[annid]['correct streak'] for annid in agg_data],
+        'Number Correct' : [agg_data[annid]['number correct'] for annid in agg_data],
+        'Number Wrong' : [agg_data[annid]['number wrong'] for annid in agg_data],
+        'Total Number Seen' : [agg_data[annid]['total number seen'] for annid in agg_data],
+        'date last correct' : [agg_data[annid]['date last correct'] for annid in agg_data],
+        'date last wrong' : [agg_data[annid]['date last wrong'] for annid in agg_data],
+        'song of last correct' : [agg_data[annid]['song of last correct'] for annid in agg_data],
+        'url of last correct' : [agg_data[annid]['url of last correct'] for annid in agg_data],
+        'song of last wrong' : [agg_data[annid]['song of last wrong'] for annid in agg_data],
+        'url of last wrong' : [agg_data[annid]['url of last wrong'] for annid in agg_data]
     }
-    return pd.DataFrame(data=pd_data)
+    df = pd.DataFrame(data=pd_data)
+    df = df.set_index(['ANN ID', 'Show Name'])
+
+    # save as excel sheet
+    df.to_excel('all_song_overview.xlsx')
+    
+    return df
 
 
 if __name__ == '__main__':
@@ -100,7 +107,6 @@ if __name__ == '__main__':
         sys.exit(1) 
     print('Looking at data for', username)
 
-    data = load_data_in_dir(min_date, username, datadir)
-    df = convert_to_df(data)
-    df.to_excel('all_song_overview.xlsx')
-    print(df)
+    data_files = get_filenames_in_order(datadir)
+    df = make_report(data_files, username)
+    print(df[['In List?', 'Correct Streak']])
