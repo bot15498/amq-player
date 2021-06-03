@@ -55,8 +55,12 @@ def parse_file(filename, date, username, annid, cum_song_data):
 
 def make_report(filenames, username, annid):
     cum_song_data = {}
+    cum_show_data = {}
     for date, filename in filenames:
         cum_song_data, show_data = parse_file(filename, date, username, annid, cum_song_data)
+        for key in show_data:
+            if show_data[key] != '':
+                cum_show_data[key] = show_data[key]
     # convert to df
     pd_data = {
         'Song name' : [name for name, _ in cum_song_data],
@@ -72,8 +76,7 @@ def make_report(filenames, username, annid):
     }
     df = pd.DataFrame(data=pd_data)
     df = df.set_index(['Song name', 'Artist', 'Song type'])
-    df.to_excel('output-' + str(annid) + '-' + show_data['name'] + '.xlsx')
-    return df, show_data
+    return df, cum_show_data
 
 
 if __name__ == '__main__':
@@ -90,17 +93,27 @@ if __name__ == '__main__':
         elif o == '--data':
             datadir = a
         elif o == '--annid':
-            annid = int(a)
+            annids = [int(x) for x in a.split(',')]
     if username == '':
         print('Missing username!', file=sys.stderr)
         sys.exit(1) 
-    elif annid <= 0:
+    elif len(annids) <= 0:
         print('Missing annid to search on!', file=sys.stderr)
         sys.exit(1)
-    print('Looking at data for', username,'for show with annid:',str(annid))
 
     all_filenames = get_filenames_in_order(datadir)
-    df, show_data = make_report(all_filenames, username, annid)
-    print(df[['Correct streak', 'Number of times seen', 'webm url']])
+    all_df = []
+    all_ids = []
+    all_names = []
+    for annid in annids:
+        print('Looking at data for', username,'for show with annid:',str(annid))
+        df, show_data = make_report(all_filenames, username, annid)
+        all_ids.append(str(show_data['annid']))
+        all_names.append(show_data['name'])
+        all_df.append(df)
+
+    all_df = pd.concat(all_df)
+    all_df.to_excel('output-' + '_'.join(all_ids) + '-' + '_'.join(all_names) + '.xlsx')
+    print(all_df[['Correct streak', 'Number of times seen', 'webm url']])
     print()
-    print(show_data)
+    print(all_names)
