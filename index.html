@@ -11,8 +11,16 @@
                 var jsonArr = JSON.parse(document.getElementById("song-input").value);
                 var idx = Math.floor(Math.random() * jsonArr.length);
                 var curr = jsonArr[idx];
-                var url = curr["url"].split('/');
-                url = "songs/" + url[url.length - 1];
+                var url = "";
+                if(document.getElementById("load-from-web").checked)
+                {
+                    url = curr["url"];
+                }
+                else
+                {
+                    url = curr["url"].split('/');
+                    url = "songs/" + url[url.length - 1];
+                }
                 var outstr = "";
                 Object.keys(curr).forEach(function(key){
                     if(key == "url") {return; }
@@ -33,6 +41,7 @@
         <h1>wake up girls simulator 3030</h1>
         <button style="display:inline-block" onclick="playNext()">reload</button>
         <input id="replay-check" type="checkbox" name="repeat?">repeat?</input>
+        <input id="load-from-web" type="checkbox" name="load webm from the web">load webm from web?</input>
         <table>
             <tr>
                 <td style="width: 50%;">
