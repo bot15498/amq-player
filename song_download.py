@@ -18,7 +18,10 @@ def main():
         if os.path.isfile('songs/' + entry['url'].split('/')[-1]):
             print('Found file, skipping...')
             continue
-        req.urlretrieve(entry['url'], 'songs/' + entry['url'].split('/')[-1])
+        try:
+            req.urlretrieve(entry['url'], 'songs/' + entry['url'].split('/')[-1])
+        except:
+            print('Could not download file:',entry['url'])
 
 
 if __name__ == "__main__":

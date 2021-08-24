@@ -253,7 +253,10 @@
 { "name": "Aikatsu on Parade!", "type" : "Insert", "song name": "Start Line!", "artist" : "Risuko・Ruka", "url" : "https://files.catbox.moe/rver4q.webm"},
 { "name": "Aikatsu on Parade!", "type" : "Insert", "song name": "Take Me Higher", "artist" : "Hibiki from BEST FRIENDS!/Risuko/Risa", "url" : "https://files.catbox.moe/lubgu4.webm"},
 { "name": "Aikatsu on Parade!", "type" : "Insert", "song name": "We wish you a merry Christmas", "artist" : "Sunao/Sena・Rie・Miki・Kana・Nanase/Aine・Mio・Maika・Ema from BEST FRIENDS!", "url" : "https://files.catbox.moe/v2m3ec.webm"},
+{ "name": "Aikatsu on Parade!", "type" : "ED 1", "song name": "Idol Katsudou! on Parade! ver", "artist" : "Raki・Aine・Mio from BEST FRIENDS!/Waka・Ruka・Sena", "url" : "https://files.catbox.moe/a4kslo.webm"},
+{ "name": "Aikatsu on Parade!", "type" : "ED 8", "song name": "Alice Blue no Kiss ~Another Color~", "artist" : "More Than True", "url" : "https://files.catbox.moe/v62h92.webm"},
 { "name": "Aikatsu Planet!", "type" : "Insert", "song name": "Bloomy*Smile", "artist" : "Mao・Ruli from STARRY PLANET☆", "url" : "https://files.catbox.moe/pvadhm.webm"},
+{ "name": "Aikatsu Planet!", "type" : "Insert", "song name": "Fantastic Imagination", "artist" : "Mao・Meisa from STARRY PLANET☆", "url" : "https://files.catbox.moe/3zbnjr.webm"},
 { "name": "Aikatsu Planet!", "type" : "Insert", "song name": "FLYING TIPS", "artist" : "Ayumi・Ruli from STARRY PLANET☆", "url" : "https://files.catbox.moe/15w9f8.webm"},
 { "name": "Aikatsu Planet!", "type" : "Insert", "song name": "HAPPY∞Aikatsu!", "artist" : "Mao・Ruli from STARRY PLANET☆", "url" : "https://files.catbox.moe/thmjdk.webm"},
 { "name": "Aikatsu Planet!", "type" : "Insert", "song name": "Inner Voice", "artist" : "Ruli・Kyouko from STARRY PLANET☆", "url" : "https://files.catbox.moe/27jwfg.webm"},
@@ -264,10 +267,4 @@
 { "name": "Aikatsu Planet!", "type" : "Insert", "song name": "Mata Mata Mata Mata Mata Ashita", "artist" : "Mao・Shiori from STARRY PLANET☆", "url" : "https://files.catbox.moe/yxtit4.webm"},
 { "name": "Aikatsu Planet!", "type" : "Insert", "song name": "Puchi Pura Everyday", "artist" : "Ann・Sala from STARRY PLANET☆", "url" : "https://files.catbox.moe/6ejr6v.webm"},
 
-{ "name": "Fragtime", "type" : "ED 1", "song name": "fragile", "artist" : "Miku Itō & Yume Miyamoto", "url" : "https://files.catbox.moe/54qajc.webm"},
-{ "name": "Hakubo", "type" : "ED 1", "song name": "Tooku", "artist" : "AZUMA HITOMI", "url" : "https://files.catbox.moe/v0n5ld.webm"},
-{ "name": "Penguin Highway", "type" : "ED 1", "song name": "Good Night", "artist" : "Hikaru Utada", "url" : "https://files.catbox.moe/wcvbkw.webm"},
-{ "name": "Aura: Koga Maryuin's Last War", "type" : "ED 1", "song name": "Bokura no Sekai", "artist" : "CooRie", "url" : "https://files.catbox.moe/11awdk.webm"},
-{ "name": "Sakasama no Patema", "type" : "ED 1", "song name": "Patema Inverse", "artist" : "Estelle Micheau", "url" : "https://files.catbox.moe/1xhchj.webm"},
-{ "name": "Hana to Alice Satsujin Jiken", "type" : "ED 1", "song name": "Fish in the Pole", "artist" : "Hec to Pascal", "url" : "https://files.catbox.moe/tkdoht.webm"}
 ]
