@@ -23,11 +23,11 @@ def get_songtype(song_json):
 
 
 def download_song(song_json, output_dir):
-    print('Downloading {0}, {1}'.format(song_json['animeENName'], song_json['songType']))
+    songtype = get_songtype(song_json)
+    output_filename = ''.join(x for x in song_json['animeENName'] if x.isalnum()) + '_' + songtype + '_' + str(song_json['annSongId']) + '.mp3'
+    print('Downloading {0}'.format(output_filename))
 
     # set up the filename (important!).
-    songtype = get_songtype(song_json)
-    output_filename = ''.join(x for x in song_json['animeENName'] if x.isalnum()) + '_' + songtype + '.mp3'
     full_output_path = os.path.join(output_dir,output_filename)
 
     try:
@@ -48,9 +48,9 @@ def fix_metadata(song_json, output_file):
     if audiofile.tag is None:
         audiofile.initTag()
 
-    audiofile.tag.title = song_json['animeJPName'] + ' ' + songtype + ' - ' + song_json['songName']
+    audiofile.tag.title = song_json['songName']
     audiofile.tag.track_num = re.findall('\d+',song_json['songType'])[-1]
-    audiofile.tag.artist = ';'.join([artist['names'][0] for artist in song_json['artists']])
+    audiofile.tag.artist = song_json['animeJPName'] + ' ' + songtype + ' - ' + ';'.join([artist['names'][0] for artist in song_json['artists']])
 
     audiofile.tag.save()
 
