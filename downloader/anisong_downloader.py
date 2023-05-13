@@ -48,9 +48,11 @@ def fix_metadata(song_json, output_file):
     if audiofile.tag is None:
         audiofile.initTag()
 
-    audiofile.tag.title = song_json['songName']
+    anime_name = song_json['animeENName'] if len(song_json['animeENName']) < len(song_json['animeJPName']) else song_json['animeJPName']
+
+    audiofile.tag.title = anime_name + ' ' + songtype + ' - ' +song_json['songName']
     audiofile.tag.track_num = re.findall('\d+',song_json['songType'])[-1]
-    audiofile.tag.artist = song_json['animeJPName'] + ' ' + songtype + ' - ' + ';'.join([artist['names'][0] for artist in song_json['artists']])
+    audiofile.tag.artist = ';'.join([artist['names'][0] for artist in song_json['artists']])
 
     audiofile.tag.save()
 
