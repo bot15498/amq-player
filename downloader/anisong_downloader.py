@@ -58,30 +58,26 @@ def fix_metadata(song_json, output_file):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
+    if len(sys.argv) < 3:
         print('Downloads songs from a certain animesong database.')
-        print('Usage: anisong_downloader.py <path to json> <output path>')
+        print('Usage: anisong_downloader.py <output path>  <path to json> ...')
         sys.exit(0)
-    elif len(sys.argv) == 2:
-        # json file is provided, assume that the 
-        # download location is pwd.
-        json_filename = sys.argv[1]
-        download_dir = os.getcwd()
     elif len(sys.argv) >=3:
-        json_filename = sys.argv[1]
-        download_dir = sys.argv[2]
+        json_filenames = sys.argv[2:]
+        download_dir = sys.argv[1]
 
-    # load file
-    file = open(json_filename, encoding='utf-8')
-    json_data = json.load(file, encoding='utf-8')
-    file.close()
+    for json_filename in json_filenames:
+        # load file
+        file = open(json_filename, encoding='utf-8')
+        json_data = json.load(file, encoding='utf-8')
+        file.close()
 
-    # add numberings to inserts
-    json_data = add_numbers_to_inserts(json_data)
+        # add numberings to inserts
+        json_data = add_numbers_to_inserts(json_data)
 
-    # download the files
-    for song_json in json_data:
-        output_filename = download_song(song_json, download_dir)
-        fix_metadata(song_json, output_filename)
+        # download the files
+        for song_json in json_data:
+            output_filename = download_song(song_json, download_dir)
+            fix_metadata(song_json, output_filename)
     
     print('Done!')
