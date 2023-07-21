@@ -41,7 +41,7 @@ def download_song(song_json, output_dir):
     if not audio_success:
         # try and download webm
         try:
-            os.system('ffmpeg -i "{0}" -vn -acodec mp3 "{1}"'.format(song_json['HQ'], full_output_path))
+            os.system('ffmpeg -i "{0}" -vn -acodec mp3 -ab 320k "{1}"'.format(song_json['HQ'], full_output_path))
         except:
             print('Failed to download {0}'.format(song_json['HQ']))
 
