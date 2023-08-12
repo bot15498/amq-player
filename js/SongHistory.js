@@ -3,6 +3,7 @@
 // @version      1.0.0
 // @description  Adds song tracking and submitting to external site.
 // @author       you
+// @connect      http://localhost:3001/
 // @match        https://animemusicquiz.com/*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
@@ -20,7 +21,7 @@ let loadInterval = setInterval(() => {
 
 let onResultListener;
 let onNextSongListener;
-let songHistoryUrl = 'http://localhost:3001/submit';
+let songHistoryUrl = 'http://localhost:3001/';
 
 function setup() {
     onResultListener = new Listener('answer results', onAnswerResult);
@@ -34,6 +35,16 @@ function onAnswerResult(result) {
     // collect data to send to webapp
     const you = getSelf()
     if(you.length !== 0 && 'catbox' in result.songInfo.urlMap) {
+        // get the highest res video
+        var catboxUrl = "huh";
+        if ('720' in result.songInfo.urlMap.catbox) {
+            catboxUrl = result.songInfo.urlMap.catbox['720'];
+        } else if ('480' in result.songInfo.urlMap.catbox) {
+            catboxUrl = result.songInfo.urlMap.catbox['480'];
+        } else {
+            catboxUrl = result.songInfo.urlMap.catbox['0'];
+        }
+
         var payload = {};
         // console.log(result);
         payload.songInfo = {animeNameEN: result.songInfo.animeNames.english, 
@@ -42,7 +53,7 @@ function onAnswerResult(result) {
                             songName: result.songInfo.songName,
                             artist: result.songInfo.artist,
                             // very ugly I cry
-                            id: result.songInfo.urlMap.catbox['0'].split('catbox.moe/').slice(-1)[0],
+                            id: catboxUrl.split('catbox.moe/').slice(-1)[0],
                             difficulty: result.songInfo.animeDifficulty
                         };
         payload.playerInfo = {answer: you[0].avatarSlot.$answerContainerText.text(),
@@ -53,14 +64,17 @@ function onAnswerResult(result) {
         console.log()
         GM_xmlhttpRequest({
             method: 'POST',
-            url: songHistoryUrl + '/' + payload.songInfo.id.split('.webm').slice(0),
+            url: songHistoryUrl + 'submit/' + payload.songInfo.id,
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
-            data: 'data=' + encodeURIComponent(JSON.stringify(payload)),
+            data: 'data=' + JSON.stringify(payload),
             onload: (resp) => {
                 // update stats info.
+                responsePayload = JSON.parse(resp.responseText);
                 console.log(resp);
+                console.log(responsePayload);
+                addStatsToSongInfo(responsePayload)
             },
             onerror: (resp) => {
                 console.log('Got back error when posting data.');
@@ -68,7 +82,6 @@ function onAnswerResult(result) {
                 gameChat.systemMessage('Failed to post / get song history info. Is the server running?');
             }
         })
-        console.log(payload);
     }
 }
 
