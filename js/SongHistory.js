@@ -3,7 +3,7 @@
 // @version      1.0.0
 // @description  Adds song tracking and submitting to external site.
 // @author       you
-// @connect      http://localhost:3001/
+// @connect      localhost
 // @match        https://animemusicquiz.com/*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
@@ -53,25 +53,26 @@ function onAnswerResult(result) {
                             songName: result.songInfo.songName,
                             artist: result.songInfo.artist,
                             // very ugly I cry
-                            id: catboxUrl.split('catbox.moe/').slice(-1)[0],
+                            id: catboxUrl.split('catbox.moe/').slice(-1)[0].split('.')[0],
                             difficulty: result.songInfo.animeDifficulty
                         };
         payload.playerInfo = {answer: you[0].avatarSlot.$answerContainerText.text(),
-                                correct: result.players[you[0].gamePlayerId].correct
+                                correct: result.players[you[0].gamePlayerId].correct,
+                                username: you[0]._name
                         };
 
         // make post request
-        console.log()
+        const jsonString = JSON.stringify(payload);
         GM_xmlhttpRequest({
             method: 'POST',
             url: songHistoryUrl + 'submit/' + payload.songInfo.id,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
-            data: 'data=' + JSON.stringify(payload),
+            data: 'data=' + encodeURIComponent(jsonString),
             onload: (resp) => {
                 // update stats info.
-                responsePayload = JSON.parse(resp.responseText);
+                const responsePayload = JSON.parse(resp.responseText);
                 console.log(resp);
                 console.log(responsePayload);
                 addStatsToSongInfo(responsePayload)
