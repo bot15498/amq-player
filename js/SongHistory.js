@@ -73,7 +73,6 @@ function onAnswerResult(result) {
             onload: (resp) => {
                 // update stats info.
                 const responsePayload = JSON.parse(resp.responseText);
-                console.log(resp);
                 console.log(responsePayload);
                 addStatsToSongInfo(responsePayload)
             },
