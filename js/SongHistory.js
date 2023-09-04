@@ -4,6 +4,7 @@
 // @description  Adds song tracking and submitting to external site.
 // @author       you
 // @connect      localhost
+// @connect      amq-player-viewer.onrender.com
 // @match        https://animemusicquiz.com/*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
@@ -21,9 +22,51 @@ let loadInterval = setInterval(() => {
 
 let onResultListener;
 let onNextSongListener;
-let songHistoryUrl = 'http://localhost:3001/';
+// let songHistoryUrl = 'http://localhost:3001/';
+let songHistoryUrl = 'https://amq-player-viewer.onrender.com/';
+
+// create the settings tab in the settings modal and populate it with the default url
+$("#settingModal .tabContainer")
+.append($("<div></div>")
+    .addClass("tab leftRightButtonTop clickAble")
+    .attr("onClick", "options.selectTab('songHistorySettingsContainer', this)")
+    .append($("<h5></h5>")
+        .text("Song History")
+    )
+);
+// Create the body base
+$("#settingModal .modal-body")
+.append($("<div></div>")
+    .attr("id", "songHistorySettingsContainer")
+    .addClass("settingContentContainer hide")
+    .append($("<div></div>")
+        .addClass("row")
+    )
+);
+// Add single text box with label.
+$("#songHistorySettingsContainer > .row")
+    .append($("<div></div>")
+        .addClass("col-xs-6")
+        .append($("<div></div>")
+            .attr("style", "text-align: center")
+            .append($("<label></label>")
+                .text('Song History endpoing URL')
+            )
+        )
+        .append($("<div></div>")
+            .append($('<input></input>')
+                .attr('id', 'songHistoryUrlInput')
+                .addClass('form-control')
+                .val(songHistoryUrl)
+            )
+        )
+    );
+$('#songHistoryUrlInput').on('change', () => {
+    songHistoryUrl = $('#songHistoryUrlInput').val();
+});
 
 function setup() {
+    // create the listeners that actually listen to the next song events.
     onResultListener = new Listener('answer results', onAnswerResult);
     onNextSongListener = new Listener('play next song', onNextSong);
 
@@ -57,7 +100,7 @@ function onAnswerResult(result) {
                             difficulty: result.songInfo.animeDifficulty
                         };
         payload.playerInfo = {answer: you[0].avatarSlot.$answerContainerText.text(),
-                                correct: result.players[you[0].gamePlayerId].correct,
+                                correct: getSelfFromResults(result, you[0])[0].correct,
                                 username: you[0]._name
                         };
 
@@ -141,4 +184,8 @@ function clearSongInfoStats() {
 function getSelf() {
     // we only care about ourself (for now)
     return Object.values(quiz.players).filter(player => player.isSelf);
+}
+
+function getSelfFromResults(results, self) {
+    return Object.values(results.players).filter(player => player.gamePlayerId == self.gamePlayerId);
 }
