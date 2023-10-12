@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AMQ Song History
-// @version      1.0.0
+// @version      1.0.1
 // @description  Adds song tracking and submitting to external site.
 // @author       you
 // @connect      localhost
@@ -77,15 +77,15 @@ function setup() {
 function onAnswerResult(result) {
     // collect data to send to webapp
     const you = getSelf()
-    if(you.length !== 0 && 'catbox' in result.songInfo.urlMap) {
+    if(you.length !== 0 && 'catbox' in result.songInfo.videoTargetMap) {
         // get the highest res video
         var catboxUrl = "huh";
-        if ('720' in result.songInfo.urlMap.catbox) {
-            catboxUrl = result.songInfo.urlMap.catbox['720'];
-        } else if ('480' in result.songInfo.urlMap.catbox) {
-            catboxUrl = result.songInfo.urlMap.catbox['480'];
+        if ('720' in result.songInfo.videoTargetMap.catbox) {
+            catboxUrl = result.songInfo.videoTargetMap.catbox['720'];
+        } else if ('480' in result.songInfo.videoTargetMap.catbox) {
+            catboxUrl = result.songInfo.videoTargetMap.catbox['480'];
         } else {
-            catboxUrl = result.songInfo.urlMap.catbox['0'];
+            catboxUrl = result.songInfo.videoTargetMap.catbox['0'];
         }
 
         var payload = {};
@@ -96,7 +96,7 @@ function onAnswerResult(result) {
                             songName: result.songInfo.songName,
                             artist: result.songInfo.artist,
                             // very ugly I cry
-                            id: catboxUrl.split('catbox.moe/').slice(-1)[0].split('.')[0],
+                            id: catboxUrl.split('catbox.video/').slice(-1)[0].split('.')[0],
                             difficulty: result.songInfo.animeDifficulty
                         };
         payload.playerInfo = {answer: you[0].avatarSlot.$answerContainerText.text(),
