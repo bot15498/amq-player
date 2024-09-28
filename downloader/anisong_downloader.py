@@ -34,14 +34,14 @@ def download_song(song_json, output_dir):
     if song_json['audio'] is not None and 'mp3' in song_json['audio']:
         # audio exists, try and download it
         try:
-            req.urlretrieve(song_json['audio'], full_output_path)
+            req.urlretrieve("https://ladist1.catbox.video/" + song_json['audio'], full_output_path)
             audio_success = True
         except:
             print('Failed to download {0}'.format(song_json['audio']))
     if not audio_success:
         # try and download webm
         try:
-            os.system('ffmpeg -i "{0}" -vn -acodec mp3 -ab 320k "{1}"'.format(song_json['HQ'], full_output_path))
+            os.system('ffmpeg -i "https://ladist1.catbox.video/{0}" -vn -acodec mp3 -ab 320k "{1}"'.format(song_json['HQ'], full_output_path))
         except:
             print('Failed to download {0}'.format(song_json['HQ']))
 
@@ -55,12 +55,11 @@ def fix_metadata(song_json, output_file):
     songtype = songtype[0:2] + ' ' + songtype[2:]
 
     audiofile = eyed3.load(output_file)
-    if audiofile.tag is None:
-        audiofile.initTag()
+    audiofile.initTag()
 
     anime_name = song_json['animeENName'] if len(song_json['animeENName']) + 10 < len(song_json['animeJPName']) else song_json['animeJPName']
 
-    audiofile.tag.title = anime_name + ' ' + songtype + ' - ' +song_json['songName']
+    audiofile.tag.title = anime_name + ' ' + songtype + ' - ' + song_json['songName']
     audiofile.tag.track_num = re.findall('\d+',song_json['songType'])[-1]
     audiofile.tag.artist = ';'.join([artist['names'][0] for artist in song_json['artists']])
 
@@ -79,7 +78,8 @@ if __name__ == '__main__':
     for json_filename in json_filenames:
         # load file
         file = open(json_filename, encoding='utf-8')
-        json_data = json.load(file, encoding='utf-8')
+        # json_data = json.load(file, encoding='utf-8')
+        json_data = json.load(file)
         file.close()
 
         # add numberings to inserts
